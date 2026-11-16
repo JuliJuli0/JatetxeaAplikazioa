@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="JatetxeaAplikazioa.App">
+
+    <Application.Resources>
+        <ResourceDictionary>
+
+            <!-- ========================================================== -->
+            <!-- KOLORE PALETA GLOBALA (Jatetxe/Sukalde giroko tonu epelak) -->
+            <!-- ========================================================== -->
+            <Color x:Key="Krema">#F4EFE6</Color>
+            <Color x:Key="Zuria">#FFFFFF</Color>
+            <Color x:Key="Egurra">#D4C5B9</Color>
+            <Color x:Key="Txokolatea">#2C221E</Color>
+            <Color x:Key="Salbia">#6B705C</Color>
+            <Color x:Key="Terracota">#C2410C</Color>
+            <Color x:Key="TerracotaLeuna">#FBE9DF</Color>
+            <Color x:Key="Gorria">#B91C1C</Color>
+
+            <!-- ========================================================== -->
+            <!-- ELEMENTU GLOBALEN ESTILOAK -->
+            <!-- ========================================================== -->
+
+            <!-- Orri guztien atzeko kolore lehenetsia (Krema epela) -->
+            <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+                <Setter Property="BackgroundColor" Value="{StaticResource Krema}" />
+            </Style>
+
+            <!-- Testu arruntaren kolore orokorra -->
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Txokolatea}" />
+            </Style>
+
+            <!-- ========================================================== -->
+            <!-- TESTU ESTILO ESPEZIFIKOAK (LABELS) -->
+            <!-- ========================================================== -->
+
+            <!-- Orri nagusietako izenburu handiak -->
+            <Style x:Key="Izenburua" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Txokolatea}" />
+                <Setter Property="FontSize" Value="26" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            <!-- Atal edo blokeen izenburuak -->
+            <Style x:Key="AtalIzenburua" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Txokolatea}" />
+                <Setter Property="FontSize" Value="17" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+
+            <!-- Testu argi edo sekundarioak (azalpenak) -->
+            <Style x:Key="Ahula" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Salbia}" />
+                <Setter Property="FontSize" Value="13" />
+            </Style>
+
+            <!-- Formularioko eremuen etiketak -->
+            <Style x:Key="EremuEtiketa" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Salbia}" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <!-- Errore mezuen estiloa -->
+            <Style x:Key="ErroreEtiketa" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource Gorria}" />
+                <Setter Property="FontSize" Value="13" />
+            </Style>
+
+            <!-- ========================================================== -->
+            <!-- UI OSAGAIEN ESTILOAK (UI COMPONENTS) -->
+            <!-- ========================================================== -->
+
+            <!-- Txartelak (ertz borobilduko eta atzeko zuriko edukiontziak) -->
+            <Style x:Key="Txartela" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{StaticResource Zuria}" />
+                <Setter Property="Stroke" Value="{StaticResource Egurra}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="StrokeShape">
+                    <Setter.Value>
+                        <RoundRectangle CornerRadius="10" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Marra banatzaile horizontala -->
+            <Style x:Key="Marra" TargetType="BoxView">
+                <Setter Property="HeightRequest" Value="1" />
+                <Setter Property="Color" Value="{StaticResource Egurra}" />
+            </Style>
+
+            <!-- ========================================================== -->
+            <!-- BOTOIEN ESTILOAK (BUTTONS) -->
+            <!-- ========================================================== -->
+
+            <!-- Botoi nagusia (Gorde, Gehitu, etab.) -->
+            <Style x:Key="BotoiNagusia" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource Terracota}" />
+                <Setter Property="TextColor" Value="{StaticResource Zuria}" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="20,10" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Disabled">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="#D6D3D1" />
+                                    <Setter Property="TextColor" Value="#A8A29E" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+
+            <!-- Bigarren mailako botoia (Utzi, Editatu, etab.) -->
+            <Style x:Key="BigarrenMailakoBotoia" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource TerracotaLeuna}" />
+                <Setter Property="TextColor" Value="{StaticResource Terracota}" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16,8" />
+            </Style>
+
+            <!-- Ekintza suntsitzaileetarako botoia (Ezabatu) -->
+            <Style x:Key="ArriskuBotoia" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="TextColor" Value="{StaticResource Gorria}" />
+                <Setter Property="BorderColor" Value="{StaticResource Gorria}" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16,8" />
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:JatetxeaAplikazioa.Models"
+             x:Class="JatetxeaAplikazioa.Views.ChefsPage"
+             Title="Sukaldariak">
+
+    <!-- Pantaila bi zutabetan banatzen da: ezkerrean zerrenda, eskuinean xehetasunak edo formularioa -->
+    <Grid ColumnDefinitions="360,*" ColumnSpacing="16" Padding="16">
+
+        <!-- ========================================================== -->
+        <!-- EZKERREKO PANELA: Sukaldarien zerrenda eta bilatzailea -->
+        <!-- ========================================================== -->
+        <Grid x:Name="LeftPanel" Grid.Column="0" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="10">
+
+            <!-- Errezetetara itzultzeko botoia -->
+            <Button Grid.Row="0"
+                    Text="← Joan errezetetara"
+                    Style="{StaticResource BigarrenMailakoBotoia}"
+                    Clicked="OnGoToRecipesClicked"
+                    HorizontalOptions="Fill" />
+
+            <!-- Bilaketa kutxa (Koloreak zuzenduta) -->
+            <SearchBar x:Name="SearchEntry"
+                       Grid.Row="1"
+                       Placeholder="Bilatu sukaldaria..."
+                       TextColor="Black"
+                       BackgroundColor="White"
+                       PlaceholderColor="#666666"
+                       TextChanged="OnSearchChanged" />
+
+            <!-- Sukaldari berria gehitzeko botoia -->
+            <Button Grid.Row="2"
+                    Text="+ Sukaldari berria"
+                    Style="{StaticResource BigarrenMailakoBotoia}"
+                    Clicked="OnAddChefClicked" />
+
+            <!-- Sukaldarien zerrenda (CollectionView) -->
+            <Border Grid.Row="3" Style="{StaticResource Txartela}" Padding="0">
+                <CollectionView x:Name="ChefList"
+                                SelectionMode="Single"
+                                SelectionChanged="OnChefSelected">
+
+                    <!-- Zerrenda hutsik dagoenean agertuko den mezua -->
+                    <CollectionView.EmptyView>
+                        <Label Text="Ez da sukaldaririk aurkitu."
+                               Style="{StaticResource Ahula}"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,32" />
+                    </CollectionView.EmptyView>
+
+                    <!-- Elementu bakoitzaren diseinua -->
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Chef">
+                            <VerticalStackLayout Padding="14,10" Spacing="1">
+                                <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="15" />
+                                <Label Text="{Binding Specialty}" Style="{StaticResource Ahula}" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
+        </Grid>
+
+        <!-- ========================================================== -->
+        <!-- ESKUINEKO PANELA: Xehetasunak edo Formularioa -->
+        <!-- ========================================================== -->
+        <Border Grid.Column="1" Style="{StaticResource Txartela}" Padding="24">
+            <Grid>
+
+                <!-- 1. Ezer aukeratu gabe dagoenean ikusiko den oharra -->
+                <Label x:Name="PlaceholderLabel"
+                       Text="Aukeratu sukaldari bat ezkerreko zerrendan."
+                       Style="{StaticResource Ahula}"
+                       HorizontalOptions="Center" VerticalOptions="Center" />
+
+                <!-- 2. Aukeratutako sukaldariaren datuak eta errezetak -->
+                <ScrollView x:Name="ViewPanel" IsVisible="False">
+                    <VerticalStackLayout Spacing="16">
+
+                        <!-- Sukaldariaren oinarrizko datuak -->
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding FullName}" Style="{StaticResource Izenburua}" />
+                            <Label Text="{Binding Country, StringFormat='Herrialdea: {0}'}" />
+                            <Label Text="{Binding Specialty, StringFormat='Espezialitatea: {0}'}" />
+                        </VerticalStackLayout>
+
+                        <!-- Ekintza botoiak (Editatu / Ezabatu) -->
+                        <HorizontalStackLayout Spacing="10">
+                            <Button Text="Editatu datuak"
+                                    Style="{StaticResource BigarrenMailakoBotoia}"
+                                    Clicked="OnEditChefClicked" />
+                            <Button Text="Ezabatu sukaldaria"
+                                    Style="{StaticResource ArriskuBotoia}"
+                                    Clicked="OnDeleteChefClicked" />
+                        </HorizontalStackLayout>
+
+                        <BoxView Style="{StaticResource Marra}" />
+
+                        <!-- Sukaldari honen errezeten atala -->
+                        <Label x:Name="RecipesTitleLabel" Text="Sukaldariaren errezetak (0)" Style="{StaticResource AtalIzenburua}" />
+
+                        <CollectionView x:Name="ChefRecipesList" HeightRequest="200" SelectionMode="None">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:RecipeView">
+                                    <Grid Padding="10" ColumnDefinitions="*, Auto">
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                            <Label Text="{Binding Subtitle}" Style="{StaticResource Ahula}" FontSize="12" />
+                                        </VerticalStackLayout>
+                                        <!-- Klik bikoitza errezetara joateko -->
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="OnRecipeDoubleTapped" />
+                                        </Grid.GestureRecognizers>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <!-- 3. Sukaldari berria sortzeko edo editatzeko formularioa -->
+                <ScrollView x:Name="FormPanel" IsVisible="False">
+                    <VerticalStackLayout Spacing="14" MaximumWidthRequest="560" HorizontalOptions="Start">
+
+                        <!-- Formularioaren izenburua -->
+                        <Label x:Name="FormTitleLabel" Text="Sukaldari berria" Style="{StaticResource Izenburua}" />
+
+                        <!-- Datuak sartzeko eremuak (Background zuria eta Testu beltza jarrita) -->
+                        <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="12">
+
+                            <Label Text="Izena *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                            <Entry x:Name="FirstNameEntry" Grid.Column="1" Placeholder="Izena" MaxLength="60"
+                                   TextColor="Black" BackgroundColor="White" PlaceholderColor="#666666"
+                                   TextChanged="OnFormChanged" />
+
+                            <Label Grid.Row="1" Text="Abizenak *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                            <Entry x:Name="LastNameEntry" Grid.Row="1" Grid.Column="1" Placeholder="Abizenak" MaxLength="80"
+                                   TextColor="Black" BackgroundColor="White" PlaceholderColor="#666666"
+                                   TextChanged="OnFormChanged" />
+
+                            <Label Grid.Row="2" Text="Herrialdea *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                            <Entry x:Name="CountryEntry" Grid.Row="2" Grid.Column="1" Placeholder="Herrialdea" MaxLength="60"
+                                   TextColor="Black" BackgroundColor="White" PlaceholderColor="#666666"
+                                   TextChanged="OnFormChanged" />
+
+                            <Label Grid.Row="3" Text="Espezialitatea *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                            <Entry x:Name="SpecialtyEntry" Grid.Row="3" Grid.Column="1" Placeholder="Espezialitatea" MaxLength="100"
+                                   TextColor="Black" BackgroundColor="White" PlaceholderColor="#666666"
+                                   TextChanged="OnFormChanged" />
+                        </Grid>
+
+                        <Label Text="* Bete nahitaezko eremuak gorde ahal izateko" Style="{StaticResource Ahula}" />
+
+                        <!-- Gorde / Utzi botoiak -->
+                        <HorizontalStackLayout Spacing="10">
+                            <Button x:Name="SaveChefButton" Text="Gorde" Style="{StaticResource BotoiNagusia}"
+                                    IsEnabled="False" Clicked="OnSaveChefClicked" />
+                            <Button Text="Utzi" Style="{StaticResource BigarrenMailakoBotoia}" Clicked="OnCancelEditClicked" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </ScrollView>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</ContentPage>

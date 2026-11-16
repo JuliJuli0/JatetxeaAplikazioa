@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:JatetxeaAplikazioa.Models"
+             x:Class="JatetxeaAplikazioa.Views.RecipeFormPage"
+             Title="Errezeta">
+
+    <!-- Orri osorako korritze-barra (Scroll) eduki luzeak biltzeko -->
+    <ScrollView>
+        <VerticalStackLayout x:Name="MainStack" Padding="24" Spacing="18" HorizontalOptions="Center">
+
+            <!-- ========================================================== -->
+            <!-- IZENBURUA ETA AZPIIZENBURUA -->
+            <!-- ========================================================== -->
+            <VerticalStackLayout Spacing="2">
+                <Label x:Name="TitleLabel" Text="Errezeten Alta" Style="{StaticResource Izenburua}" />
+                <Label x:Name="SubtitleLabel" Text="Sortu errezeta berria zure bilduma osatzeko" Style="{StaticResource Ahula}" />
+            </VerticalStackLayout>
+
+            <!-- ========================================================== -->
+            <!-- ERREZETAREN XEHETASUNAK (Formulario nagusia) -->
+            <!-- ========================================================== -->
+            <Border Style="{StaticResource Txartela}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Errezetaren Xehetasunak" Style="{StaticResource AtalIzenburua}" />
+
+                    <!-- Eremuak eta etiketak antolatzeko Grilla (Grid) -->
+                    <Grid ColumnDefinitions="190,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                          RowSpacing="12" ColumnSpacing="12">
+
+                        <!-- Errezetaren izena -->
+                        <Label Text="Errezetaren izena *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                        <Entry x:Name="NameEntry" Grid.Column="1" Placeholder="Idatzi hemen..." MaxLength="100"
+                               TextColor="Black" BackgroundColor="White" PlaceholderColor="#666666"
+                               TextChanged="OnTextChanged" />
+
+                        <!-- Sukaldaria hautatzeko hautatzailea (Picker) -->
+                        <Label Grid.Row="1" Text="Sukaldaria *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                        <Picker x:Name="ChefPicker" Grid.Row="1" Grid.Column="1" Title="Aukeratu sukaldaria..."
+                                TextColor="Black" TitleColor="#666666" BackgroundColor="White"
+                                ItemDisplayBinding="{Binding FullName}"
+                                SelectedIndexChanged="OnPickerChanged" />
+
+                        <!-- Sukaldaritza mota -->
+                        <Label Grid.Row="2" Text="Sukaldaritza mota *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                        <Picker x:Name="CuisinePicker" Grid.Row="2" Grid.Column="1" Title="Aukeratu..."
+                                TextColor="Black" TitleColor="#666666" BackgroundColor="White"
+                                SelectedIndexChanged="OnPickerChanged" />
+
+                        <!-- Zailtasun maila -->
+                        <Label Grid.Row="3" Text="Zailtasuna *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                        <Picker x:Name="DifficultyPicker" Grid.Row="3" Grid.Column="1" Title="Aukeratu... (Erraza / Ertaina / Zaila)"
+                                TextColor="Black" TitleColor="#666666" BackgroundColor="White"
+                                SelectedIndexChanged="OnPickerChanged" />
+
+                        <!-- Prestaketa-denbora minututan -->
+                        <Label Grid.Row="4" Text="Prestaketa-denbora *" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Row="4" Grid.Column="1" Spacing="2">
+                            <HorizontalStackLayout Spacing="10">
+                                <Entry x:Name="TimeEntry" Text="30" Keyboard="Numeric" WidthRequest="110" MaxLength="3"
+                                       TextColor="Black" BackgroundColor="White"
+                                       TextChanged="OnTextChanged" />
+                                <Label Text="minutu" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <!-- Baliozkotze-errorea denborarentzat -->
+                            <Label x:Name="TimeErrorLabel" Text="1 eta 600 minutu bitartekoa izan behar da"
+                                   Style="{StaticResource ErroreEtiketa}" IsVisible="False" />
+                        </VerticalStackLayout>
+
+                        <!-- Balorazioa (0-10 bitartekoa botoien bidez kudeatua) -->
+                        <Label Grid.Row="5" Text="Balorazioa (0-10)" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Center" />
+                        <HorizontalStackLayout Grid.Row="5" Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                            <Button Text="-" FontSize="18" WidthRequest="40" HeightRequest="40" Style="{StaticResource BigarrenMailakoBotoia}" Clicked="OnDecreaseRatingClicked" />
+                            <Label x:Name="RatingLabel" Text="0.0 / 10" TextColor="Black" FontAttributes="Bold" VerticalOptions="Center" WidthRequest="80" HorizontalTextAlignment="Center" />
+                            <Button Text="+" FontSize="18" WidthRequest="40" HeightRequest="40" Style="{StaticResource BigarrenMailakoBotoia}" Clicked="OnIncreaseRatingClicked" />
+                        </HorizontalStackLayout>
+
+                        <!-- Prestaketa argibideak (Testu-editore anitzeko eremua) -->
+                        <Label Grid.Row="6" Text="Prestaketa argibideak" Style="{StaticResource EremuEtiketa}" TextColor="Black" VerticalOptions="Start" Margin="0,10,0,0" />
+                        <Editor x:Name="InstructionsEditor" Grid.Row="6" Grid.Column="1"
+                                Placeholder="1. Lehen pausoa..." HeightRequest="110" HorizontalOptions="Fill"
+                                TextColor="Black" BackgroundColor="White" PlaceholderColor="#666666"
+                                TextChanged="OnTextChanged" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ========================================================== -->
+            <!-- OSAGAIEN KUDEAKETA -->
+            <!-- ========================================================== -->
+            <Border Style="{StaticResource Txartela}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Osagaien Kudeaketa" Style="{StaticResource AtalIzenburua}" />
+
+                    <!-- Osagai berriak eskuz idatzi eta gehitzeko kontrolak -->
+                    <Grid ColumnDefinitions="2.5*,1.2*,1.2*,190" ColumnSpacing="12">
+                        <!-- Osagaiaren izena idazteko eremua -->
+                        <Entry x:Name="IngredientEntry" Placeholder="Idatzi osagaia..." VerticalOptions="Center"
+                               TextColor="Black" BackgroundColor="White" PlaceholderColor="#666666" MaxLength="50" />
+
+                        <!-- Kantitatea -->
+                        <Entry x:Name="QuantityEntry" Grid.Column="1" Placeholder="Kantitatea" Keyboard="Numeric" VerticalOptions="Center"
+                               TextColor="Black" BackgroundColor="White" PlaceholderColor="#666666" />
+
+                        <!-- Unitatea hautatzeko hautatzailea -->
+                        <Picker x:Name="UnitPicker" Grid.Column="2" Title="Unitatea" VerticalOptions="Center"
+                                TextColor="Black" TitleColor="#666666" BackgroundColor="White" />
+
+                        <!-- Ekintza-botoiak (Gehitu / Utzi) -->
+                        <HorizontalStackLayout Grid.Column="3" Spacing="8" VerticalOptions="Center">
+                            <Button x:Name="AddLineButton" Text="Gehitu osagaia" Style="{StaticResource BigarrenMailakoBotoia}"
+                                    Clicked="OnAddLineClicked" />
+                            <Button x:Name="CancelLineButton" Text="Utzi" Style="{StaticResource BigarrenMailakoBotoia}"
+                                    IsVisible="False" Clicked="OnCancelLineClicked" />
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <!-- Osagaiak gehitzerakoan gerta daitezkeen erroreak erakusteko etiketak -->
+                    <Label x:Name="LineErrorLabel" Style="{StaticResource ErroreEtiketa}" IsVisible="False" />
+
+                    <!-- Gehitutako osagaien zerrenda-taula -->
+                    <Border Style="{StaticResource Txartela}" Padding="0">
+                        <VerticalStackLayout>
+                            <!-- Taularen goiburua -->
+                            <Grid ColumnDefinitions="2.5*,1.2*,1.2*,190" Padding="14,10" ColumnSpacing="12"
+                                  BackgroundColor="{StaticResource TerracotaLeuna}">
+                                <Label Text="Osagaia" TextColor="Black" FontAttributes="Bold" />
+                                <Label Grid.Column="1" Text="Kantitatea" TextColor="Black" FontAttributes="Bold" />
+                                <Label Grid.Column="2" Text="Unitatea" TextColor="Black" FontAttributes="Bold" />
+                                <Label Grid.Column="3" Text="Ekintzak" TextColor="Black" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                            </Grid>
+
+                            <!-- Osagai-lerro dinamikoak erakusteko diseinua -->
+                            <VerticalStackLayout x:Name="LinesLayout">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:IngredientLine">
+                                        <VerticalStackLayout>
+                                            <BoxView Style="{StaticResource Marra}" />
+                                            <Grid ColumnDefinitions="2.5*,1.2*,1.2*,190" Padding="14,8" ColumnSpacing="12">
+                                                <Label Text="{Binding Name}" TextColor="Black" VerticalOptions="Center" />
+                                                <Label Grid.Column="1" Text="{Binding QuantityText}" TextColor="Black" VerticalOptions="Center" />
+                                                <Label Grid.Column="2" Text="{Binding Unit}" TextColor="Black" VerticalOptions="Center" />
+                                                <HorizontalStackLayout Grid.Column="3" Spacing="8" HorizontalOptions="Center">
+                                                    <Button Text="Editatu" FontSize="12" Padding="10,4" MinimumHeightRequest="30"
+                                                            Style="{StaticResource BigarrenMailakoBotoia}"
+                                                            Clicked="OnEditLineClicked" />
+                                                    <Button Text="Ezabatu" FontSize="12" Padding="10,4" MinimumHeightRequest="30"
+                                                            Style="{StaticResource ArriskuBotoia}"
+                                                            Clicked="OnRemoveLineClicked" />
+                                                </HorizontalStackLayout>
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                            <!-- Zerrenda hutsik dagoenean agertuko den oharra -->
+                            <Label x:Name="NoLinesLabel"
+                                   Text="Oraindik ez da osagairik gehitu. Gutxienez bat gehitu behar da."
+                                   Style="{StaticResource Ahula}"
+                                   HorizontalTextAlignment="Center"
+                                   Margin="0,16" />
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ========================================================== -->
+            <!-- BUKAERAKO BOTOIAK (Utzi eta Gorde) -->
+            <!-- ========================================================== -->
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                <!-- Beharrezko eremuen egoera edo abisuak -->
+                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                    <Label x:Name="MissingLabel" Style="{StaticResource ErroreEtiketa}" />
+                    <Label Text="* Bete nahitaezko eremuak gorde ahal izateko" Style="{StaticResource Ahula}" />
+                </VerticalStackLayout>
+
+                <!-- Utzi botoia -->
+                <Button Grid.Column="1" Text="Utzi" Style="{StaticResource BigarrenMailakoBotoia}"
+                        Clicked="OnCancelClicked" />
+
+                <!-- Gorde botoia (hasieran desgaituta egon daitekeena baldintzak bete arte) -->
+                <Button x:Name="SaveButton" Grid.Column="2" Text="Gorde" Style="{StaticResource BotoiNagusia}"
+                        IsEnabled="False" Clicked="OnSaveClicked" />
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
